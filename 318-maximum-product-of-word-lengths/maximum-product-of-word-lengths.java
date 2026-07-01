@@ -1,28 +1,21 @@
 class Solution {
     public int maxProduct(String[] words) {
+        int n = words.length;
+        int [] mask = new int[n];
         int ans = 0 ;
-        int count[]=new int[26];
-        for(int i = 0 ;i<words.length;i++){
-            count = getCharacterLength(words[i]);
+        for(int i =0 ;i<n;i++){
+            char[]ch = words[i].toCharArray();
+            for(char a : ch){
+                mask[i] |= (1<<(a-'a')); 
+            }
+        }
+        for(int i =0 ; i < words.length ; i++){
             for(int j = i+1 ;j<words.length;j++){
-                if(getWordLength(count,words[j]))
-                ans = Math.max((words[i].length() * words[j].length()),ans);
+                if((mask[i] & mask[j]) == 0){
+                    ans = Math.max(ans,(words[i].length() * words[j].length()));
+                }
             }
         }
         return ans;
-    }
-    public static boolean getWordLength(int[]c,String b){
-        for(int i = 0 ; i<b.length();i++){
-            char ch = b.charAt(i);
-            if(c[ch-'a'] > 0) return false;
-        }
-        return true;
-    }
-     public static int[] getCharacterLength(String a){
-        int [] count = new int[26];
-        for(int i =0 ;i<a.length();i++){
-            count[a.charAt(i) - 'a']++;
-        }
-        return count;
     }
 }
