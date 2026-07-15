@@ -1,39 +1,53 @@
 class Solution {
-    public static int mod = 1000000007 ;
+
+    static final int MOD = 1_000_000_007;
+
     public int subsequencePairCount(int[] nums) {
+
+        int n = nums.length;
+
         int max = 0;
-        for(int a : nums)max = Math.max(a,max); 
-        System.out.println(max);
-        int dp [][][] = new int[nums.length+1][max+1][max+1];
-        for(int i =0 ;i<nums.length;i++){
-            for(int j=0;j<max+1;j++){
-                for(int k=0;k<max+1;k++){
-                    dp[i][j][k] = -1;
+        for (int x : nums)
+            max = Math.max(max, x);
+
+        int[][][] dp = new int[n + 1][max + 1][max + 1];
+
+        // Base case
+        for (int g1 = 0; g1 <= max; g1++) {
+            for (int g2 = 0; g2 <= max; g2++) {
+                dp[n][g1][g2] = (g1 == g2) ? 1 : 0;
+            }
+        }
+
+        // Fill from back
+        for (int i = n - 1; i >= 0; i--) {
+
+            for (int g1 = 0; g1 <= max; g1++) {
+
+                for (int g2 = 0; g2 <= max; g2++) {
+
+                    long ans = dp[i + 1][g1][g2];
+
+                    ans += dp[i + 1][gcd(g1, nums[i])][g2];
+                    ans %= MOD;
+
+                    ans += dp[i + 1][g1][gcd(g2, nums[i])];
+                    ans %= MOD;
+
+                    dp[i][g1][g2] = (int) ans;
                 }
             }
         }
-        return getPairGcdCount(0,0,nums,0,dp) - 1;
+
+        return (dp[0][0][0] - 1 + MOD) % MOD;
     }
-    public static int getPairGcdCount(int seq1,int seq2,int []n , int i,int dp[][][]){
-        if(i == n.length){
-            if(seq1 == seq2) return 1;
-            else return 0;
+
+    static int gcd(int a, int b) {
+        while (b != 0) {
+            int t = b;
+            b = a % b;
+            a = t;
         }
-
-        if(dp[i][seq1][seq2] != -1) return dp[i][seq1][seq2];
-
-        long a = getPairGcdCount(seq1,seq2,n,i+1,dp) % mod;
-        long b = getPairGcdCount(gcd(seq1,n[i]),seq2,n,i+1,dp) % mod;
-        long c = getPairGcdCount(seq1,gcd(seq2,n[i]),n,i+1,dp) % mod;
-
-        return dp[i][seq1][seq2] = (int)((a+b) % mod +c) % mod;
+        return a;
     }
-  public static int gcd(int a, int b) {
-    while (b != 0) {
-        int temp = b;
-        b = a % b;
-        a = temp;
-    }
-    return a;
-}
 }
