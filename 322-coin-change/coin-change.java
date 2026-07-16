@@ -1,23 +1,23 @@
 class Solution {
     public int coinChange(int[] coins, int amount) {
-        int dp[][] = new int[coins.length][amount+1];
-        for(int arr[] : dp){
-            Arrays.fill(arr,-1);
+        long dp[][] = new long[coins.length][amount+1];
+        for(long arr[] : dp){
+            Arrays.fill(arr,Integer.MAX_VALUE);
         }
-         long a = numberOfCoins(0,coins,amount,dp);
-         return (a >= Integer.MAX_VALUE ? -1 : (int )a);
-    }
-    public static long numberOfCoins(int i , int c[],int amount,int dp[][]){
-         if(amount == 0) return 0;
-        if(i>=c.length) return Integer.MAX_VALUE;
-        if(dp[i][amount] != -1) return dp[i][amount];
-        long a = Integer.MAX_VALUE;
-        long b = Integer.MAX_VALUE;
-        if(amount-c[i] >= 0){
-             a = 1+numberOfCoins(i,c,amount-c[i],dp);
+        for(int i =0 ;i<coins.length;i++){
+            dp[i][0] = 0;
         }
-        b = numberOfCoins(i+1,c,amount,dp);
-
-        return dp[i][amount] = (int)Math.min(a,b);
+        for(int i = coins.length-1;i>=0;i--){
+            for(int j = 1 ;j<=amount ;j++){
+                if(j-coins[i] >= 0){
+             dp[i][j] = 1+dp[i][j-coins[i]];
+        }
+        if(i != coins.length-1)
+        dp[i][j] = Math.min(dp[i][j],dp[i+1][j]);
+            }
+        }
+    return dp[0][amount] >= Integer.MAX_VALUE
+       ? -1
+       : (int)dp[0][amount];
     }
 }
